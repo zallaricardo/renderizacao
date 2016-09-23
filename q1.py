@@ -1,14 +1,14 @@
 from __future__ import division
 from numpy import sin, cos, sqrt
 from PIL import Image
-import numpy 
+import numpy as np
 
 # QUESTION 1
 
 ### PARAMETRIC CIRCLE ###
 
 # Creating 200 x 200 pixels array object
-q1_shape_parametric = numpy.zeros((200,200), dtype = np.uint8)
+q1_shape_parametric = np.zeros((200,200), dtype = np.uint8)
 
 # Parametric routine: (t) -> cos(t), sen(t)
 def parametric_circle(t):
@@ -29,7 +29,6 @@ for t in range(0,360): # for all angles
 # Saving image from array of points
 Image.fromarray(q1_shape_parametric).save('q1_parametric.png')
 
-
 ### IMPLICIT CIRCLE ###
 
 # Creating 200 x 200 pixels array object
@@ -43,28 +42,30 @@ for x in range(0,200):
     for y in range(0,200):
         # For each point
 
-        # Check if x coordinate is higher
+        # X coordinate edges
         Xf = (x-0.5-100)/100
         Yf = (y-100)/100
-        z1 = implicit_circle(Xf,Yf)
+        edge_x_in = implicit_circle(Xf,Yf)
 
         Xf = (x+0.5-100)/100
         Yf = (y-100)/100
-        z2 = implicit_circle(Xf,Yf)
+        edge_x_out = implicit_circle(Xf,Yf)
 
+        # Y coordinate edges
         Xf = (x-100)/100
         Yf = (y-0.5-100)/100
-        z3 = implicit_circle(Xf,Yf)
+        edge_y_in = implicit_circle(Xf,Yf)
 
         Xf = (x-100)/100
         Yf = (y+0.5-100)/100
-        z4 = implicit_circle(Xf,Yf)
+        edge_y_out = implicit_circle(Xf,Yf)
 
-        all_pos = z1 > 0 and z2 > 0 and z3 > 0 and z4 > 0
-        all_neg = z1 < 0 and z2 < 0 and z3 < 0 and z4 < 0
-
-        if  not (all_pos or all_neg):
-            q1_shape_implicit[x][y] = 255
+        # If at least one value has different signals between x or y edges, the point is at the circle
+        outside_test = edge_x_in > 0 and edge_x_out > 0 and edge_y_in > 0 and edge_y_out > 0 # positive test - all outside circle
+        inside_test = edge_x_in < 0 and edge_x_out < 0 and edge_y_in < 0 and edge_y_out < 0 # negative test - all inside circle
+        if  not (outside_test or inside_test): # positive and negative failed
+            # Defining color for implicit points
+            q1_shape_implicit[199-x][y] = 255
 
 # Saving image from array of points
 Image.fromarray(q1_shape_implicit).save('q1_implicit.png')

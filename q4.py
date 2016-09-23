@@ -12,27 +12,31 @@ def F(x,y):
 
 for x in range(0,200):
     for y in range(0,200):
+        # For each point
+
+        # X coordinate edges
         Xf = (x-0.5-100)/50
         Yf = (y-100)/50
-        z1 = F(Xf,Yf)
+        edge_x_in = F(Xf,Yf)
 
         Xf = (x+0.5-100)/50
         Yf = (y-100)/50
-        z2 = F(Xf,Yf)
+        edge_x_out = F(Xf,Yf)
 
+        # Y coordinate edges
         Xf = (x-100)/50
         Yf = (y-0.5-100)/50
-        z3 = F(Xf,Yf)
+        edge_y_in = F(Xf,Yf)
 
         Xf = (x-100)/50
         Yf = (y+0.5-100)/50
-        z4 = F(Xf,Yf)
+        edge_y_out = F(Xf,Yf)
 
-        all_pos = z1 > 0 and z2 > 0 and z3 > 0 and z4 > 0
-        all_neg = z1 < 0 and z2 < 0 and z3 < 0 and z4 < 0
-
-        # Defining color of points in F
-        if  not (all_pos or all_neg):
+        # If at least one value has different signals between x or y edges, the point is at the circle
+        outside_test = edge_x_in > 0 and edge_x_out > 0 and edge_y_in > 0 and edge_y_out > 0 # positive test - all outside circle
+        inside_test = edge_x_in < 0 and edge_x_out < 0 and edge_y_in < 0 and edge_y_out < 0 # negative test - all inside circle
+        if  not (outside_test or inside_test): # positive and negative failed
+            # Defining color for implicit points
             q4_shape[199-y][x] = 255
 
 # Saving image from array of points
